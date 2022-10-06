@@ -2,14 +2,11 @@ class WhatsAppController {
 
     constructor(){
 
-    this.loadElements();
-    this.elementsPrototype();
-
+     this.loadElements();
+     this.elementsPrototype();
+     this.initEvents()
 
     }
-
-
-    
 
     loadElements(){
 
@@ -22,7 +19,6 @@ class WhatsAppController {
         });
 
     }
-
 
     elementsPrototype(){
 
@@ -48,14 +44,17 @@ class WhatsAppController {
         
                 }
         
-                Element.prototype.on = function(events, fn){
-                    events.spli('').forEach(event =>{
+                Element.prototype.on = function (events, fn) {
+
+                    events.split(' ').forEach(event => {
+        
                         this.addEventListener(event, fn);
         
                     });
                     return this;
-                
+        
                 }
+        
         
                 Element.prototype.css = function(styles){
                   for (let name in styles) {
@@ -91,5 +90,39 @@ class WhatsAppController {
         }
 
     }
+
+    initEvents(){
+
+        this.el.myPhoto.on('click', events =>{
+        this.closeAllLeftPanel();
+        this.el.panelEditProfile.show();
+        setTimeout(()=>{
+            this.el.panelEditProfile.addClass('open');
+        },300)
+    });
+
+    
+    this.el.btnClosePanelEditProfile.on('click', e=>{
+
+        this.el.panelEditProfile.removeClass('open');
+
+    });
+
+    this.el.btnCloselAddContact.on('click', e=>{
+
+        this.el.panelAddContact.removeClass('open');
+
+    });
+
+
+}
+
+closeAllLeftPanel(){
+
+    this.el.panelAddContact.hide();
+    this.el.panelEditProfile.hide();
+
+
+}
 
 }
