@@ -272,7 +272,57 @@ class WhatsAppController {
             this.el.closeRecordMicrophone();
             
         });
+
+        this.el.inputText.on('keypress', e=>{
+
+            if(e.key === 'Enter' && !e.ctrlKey){
+
+                e.preventDefault();
+                this.el.btnSend.click();
+
+            }
+
+
+        });
+
+        this.el.inputText.on('keyup', e=>{
+
+            if(this.el.inputText.innerHTML.lenght){
+
+                this.el.inputPlaceholder.hide();
+                this.el.btnSendMicrophone.hide();
+                this.el.btnSend.show();
+            }else {
+
+                this.el.inputPlaceholder.show();
+                this.el.btnSendMicrophone.show();
+                this.el.btnSend.hide();
+            }
+        });
         
+        this.el.btnSend.on('click', e=>{
+
+            console.log(inputText.innerHTML);
+
+        });
+
+        this.el.btnEmojis.on('click', e=>{
+
+            this.el.panelEmojis.toggleClass('open');
+
+        });
+
+        this.el.panelEmojis.querySelectorAll('.emojik').forEach(emoji => {
+
+            emoji.on('click',e =>{
+
+                console.log(emoji.dataset.unicode);
+
+            });
+
+        });
+
+
 }
 
 startRecordMicrophoneTime(){
@@ -281,7 +331,7 @@ startRecordMicrophoneTime(){
 
     this._recordMicrophoneInterval = setInterval(()=>{
 
-        this.el.recordMicrophoneTimer.innerHTML =Format.toTime(Date.now()- start);
+        this.el.recordMicrophoneTimer.innerHTML = Format.toTime(Date.now()- start);
 
     },100);
 
