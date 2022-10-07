@@ -112,11 +112,11 @@ class WhatsAppController {
         this.el.myPhoto.on('click', e=>{
         this.closeAllLeftPanel();
         this.el.panelEditProfile.show();
-
-    });
         setTimeout(()=>{
             this.el.panelEditProfile.addClass('open');
-        },300)
+        },300);
+    });
+        
   
 
     

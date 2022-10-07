@@ -1,0 +1,23 @@
+{
+  "name": "whatsapp",
+  "version": "1.0.0",
+  "description": "[![Hcode Treinamentos](https://www.hcode.com.br/res/img/hcode-200x100.png)](https://www.hcode.com.br)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pedrog01/WhatsApp-Clone.git"
+  },
+  "author": "Pedro Xavier",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pedrog01/WhatsApp-Clone/issues"
+  },
+  "homepage": "https://github.com/Pedrog01/WhatsApp-Clone#readme",
+  "dependencies": {
+    "webpack": "^3.1.0",
+    "webpack-dev-server": "^2.5.1"
+  }
+}
