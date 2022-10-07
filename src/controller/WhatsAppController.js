@@ -45,13 +45,12 @@ class WhatsAppController {
         
                 };
         
-                Element.prototype.on = function (events, fn) {
-                    events.split(' ').forEach(event => {
+                Element.prototype.on = function(events, fn){
+                    events.split(' ').forEach(event=>{
                         this.addEventListener(event, fn);
                     });
-                    return this;
+                    return this; 
                 }
-        
         
                 Element.prototype.css = function(styles){
                   for (let name in styles) {
@@ -107,19 +106,18 @@ class WhatsAppController {
 
     initEvents(){
 
-        console.log(this.el.myPhoto)
-
         this.el.myPhoto.on('click', e=>{
-        this.closeAllLeftPanel();
-        this.el.panelEditProfile.show();
-        setTimeout(()=>{
-            this.el.panelEditProfile.addClass('open');
-        },300);
-    });
-        
-  
 
-    
+            this.closeAllLeftPanel();
+            this.el.panelEditProfile.show();
+            this.el.panelAddContact.show();
+            setTimeout(()=>{
+                this.el.panelEditProfile.addClass('open');
+            }, 300);
+            
+
+        });  
+
     this.el.btnClosePanelEditProfile.on('click', e=>{
 
         this.el.panelEditProfile.removeClass('open');
