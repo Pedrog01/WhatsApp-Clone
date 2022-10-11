@@ -1,13 +1,11 @@
-import {Format} from './../util/Format';
-import {CameraController} from './CameraController';
+import { Format } from '../../util/format';
+import { CameraController } from './CameraController';
 
 
-export  class WhatsappController{
+export class WhatsAppController{
 
     constructor(){
-    console.log('whatsappController ok');
-
-
+    
     this.elementPrototype();
     this.loadElements();
     this.initEvents();
@@ -181,12 +179,12 @@ export  class WhatsappController{
         this.el.btnAttachCamera.on('click', e=>{
 
             this.el.panelMessagesContainer.hide();
-           this.el.panelCamera.addClass('open');
-           this.el.panelCamera.css({
+            this.el.panelCamera.addClass('open');
+            this.el.panelCamera.css({
             'height':'calc(100% - 120px)'
            });
 
-           this._camera = new CameraController(this.el.videoCamera);
+           this._cameraController = new CameraController(this.el.videoCamera);
 
         });
 
@@ -200,7 +198,29 @@ export  class WhatsappController{
 
         this.el.btnTakePicture.on('click', e=>{
 
-            console.log('picture');
+           let dataUrl = this._camera.takePicture();
+
+            this.el.pictureCamera.src = dataUrl;
+            this.el.pictureCamera.show();
+            this.el.videoCamera.hide();
+            this.el.btnReshootPanelCamera.show();
+            this.el.containerTakePicture.hide();
+            this.el.containerSendePicture.show();
+        });
+
+        this.el.btnReshootPanelCamera.on('click', e=>{
+
+            this.el.pictureCamera.hide();
+            this.el.videoCamera.show();
+            this.el.btnReshootPanelCamera.hide();
+            this.el.containerTakePicture.show();
+            this.el.containerSendePicture.hide();
+
+        });
+
+        this.el.btnSendPicture.on('click', e=>{
+
+            console.log(this.el.pictureCamera.src);
 
         });
 
