@@ -1,7 +1,7 @@
 {
   "name": "whatsapp",
   "version": "1.0.0",
-  "description": "[![Hcode Treinamentos](https://www.hcode.com.br/res/img/hcode-200x100.png)](https://www.hcode.com.br)",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/Pedrog01/WhatsApp-Clone#readme",
   "dependencies": {
+    "@firebase/firestore": "^3.7.1",
+    "firebase": "^7.15.5",
     "pdfjs-dist": "^2.0.489",
     "webpack": "^3.1.0",
     "webpack-dev-server": "^2.5.1"
