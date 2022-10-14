@@ -25,7 +25,7 @@ export class Firebase {
         if(!window._initializedFirebase){
             firebase.initializeApp(this._firebaseConfig);
             firebase.firestore().settings({
-                timestampsInSnapshots: true 
+               
             });
 
             window._initializedFirebase= true;
