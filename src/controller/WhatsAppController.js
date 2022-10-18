@@ -457,11 +457,9 @@ export class WhatsAppController{
 
         this.el.inputPhoto.on('change', e=>{
 
-            console.log(this.el.inputPhoto.files);
-
             [...this.el.inputPhoto.files].forEach(file=>{
 
-                console.log(file);
+               Message.sendImage(this._contactActive.chatId, this._user.email,file)
 
             });
 
@@ -512,8 +510,50 @@ export class WhatsAppController{
 
         this.el.btnSendPicture.on('click', e=>{
 
-            console.log(this.el.pictureCamera.src);
+            this.el.btnSendPicture.disabled = true;
 
+            let regex = /^data(.+);base64,(.*)$/;
+            let result = this.el.pictureCamera.src.match(regex);
+            let mimeType = result[1];
+            let ext = mimeType.split('/')[1];
+            let fileName = `camera${Date.now()}.${ext}`;
+
+            let picture = new Image();
+            picture.src = this.el.pictureCamera.src;
+            picture.onload = e =>{
+
+                let canvas = document.createElement('canvas');
+                let context =  canvas.getContext('2d');
+
+                canvas.width = picture.width;
+                canvas.height = picture.height;
+
+                context.translate(picture.width, 0);
+                context.scale(-1, 1);
+
+                context.drawImage(picture, 0, 0, canvas.width, canvas.height)
+
+                fetch(canvas.toDataUrl(mimeType))
+                .then(res => {return res.arrayBuffer(); })
+                .then(buffer =>{return new File([buffer],fileName, {type : mimeType}); })
+                .then( file =>{
+    
+                    Message.sendImage(this._contactActive, this._user.email, file);
+    
+                        this.el.btnSendPicture.disabled = false;
+                        this.closeAllMainPanel();
+                        this._camera.stop();
+                        this.el.btnReshootPanelCamera.hide();
+                        this.el.pictureCamera.hide();
+                        this.el.videoCamera.show();
+                        this.el.containerSendPicture.hide();
+                        this.el.takePicture.show();
+                        this.el.containerSendPicture.show();
+                        this.el.containerTakePicture.show();
+                        this.el.panelMessagesContainer.show();
+
+                    });           
+            }
         });
 
         this.el.btnAttachDocument.on('click', e =>{
@@ -600,7 +640,13 @@ export class WhatsAppController{
 
         this.el.btnSendDocument.on('click', e=>{
 
-            console.log('send document');
+          let file = this.el.inputDocument.files[0];
+          let base64 = this.el.imgPanelDocumentPreview.src;
+          
+          Message.sendDocument(
+            this._contactActive.chatId,
+            this._user.email,file, base64);
+
 
         });
 
