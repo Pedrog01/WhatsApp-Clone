@@ -1,83 +1,85 @@
 import { Firebase } from "../util/Firebase";
 import { Model } from "./model";
 
-export class Chat extends Model {
+export class Chat extends Model{
 
-constructor(){
-    super();
-}
-get users() {this._data.users;}
-set users(value){this._data.users = value;}
+    constructor(){
+        super();
+    }
 
-get timeStamp() {this._data.timeStamp;}
-set timeStamp(value){this._data.timeStamp = value;}
+    get users() { this._data.users; }
+    set users(value) { this._data.users= value; }
 
-static getRef(){
+    get timeStamp() { this._data.timeStamp; }
+    set timeStamp(value) { this._data.timeStamp= value; }
 
-   return Firebase.db().collection('/chats');
+    static getRef(){
 
-}
+        return Firebase.db().collection('/chats');
 
-static create(meEmail,contactEmail){
+    }
 
-    return new Promise((s,f)=>{
+    static create(meEmail, contactEmail){
 
-        let users = {};
+        return new Promise((s, f)=>{
 
-        users[btoa(meEmail)]= true;
-        users[btoa(contactEmail)]= true;
+            let users = {};
 
-        chat.getRef().add({
-            user,
+            users[btoa(meEmail)] = true;
+            users[btoa(contactEmail)] = true;
+
+           Chat.getRef().add({
+            users,
             timeStamp: new Date()
-        }).then(doc=>{
+           }).then(doc=>{
 
-            Chat.getRef().doc(doc.id).get().then(chat =>{
+            Chat.getRef().doc(doc.id).get().then(chat=>{
+
                 s(chat);
-            }).catch(err=>{f(err)});
 
-        }).catch(err=>{f(err)}); 
+            }).catch(err=>{ f(err)});
 
-    });
+           }).catch(err=>{ f(err)}); 
 
+        });
 
-}
-
-static find(meEmail,contactEmail){
-
-    return Chat.getRef()
-    .where(btoa(meEmail),'==', true)
-    .where(btoa(contactEmail),'==', true).get();
-
-}
-
- static createIfNotExists(meEmail, contactEmail){
-    return new Promise((s,f)=>{
-
-        Chat.find(meEmail,contactEmail).then(chats =>{
-
-            if(chats.empty){
-                Chat.create(meEmail, contactEmail).then(chat =>{
-                    s(chat);
-                })
-            }else{
-
-                chats.forEach(chat => {
-                       s(chat); 
-                });
-
-            }
-
-        }).catch(err=>{f(err)});
-
-    })
+    }
 
 
-    
-}
+    static find(meEmail, contactEmail){
 
+       return Chat.getRef()
+            .where(btoa(meEmail), '==', true)
+            .where(btoa(contactEmail), '==', true)
+            .get();
+    }
 
+    static createIfNotExists(meEmail, contactEmail){
 
+        return new Promise((s, f)=>{
 
+            Chat.find(meEmail, contactEmail).then(chats=>{
+
+                if (chats.empty){
+
+                    Chat.create(meEmail, contactEmail).then(chat=>{
+
+                        s(chat);
+
+                    });
+
+                } else {
+
+                    chats.forEach(chat=>{
+                        s(chat);
+                    });
+
+                }
+
+            }).catch(err=>{ f(err) });
+
+        });
+
+    }
 
 }

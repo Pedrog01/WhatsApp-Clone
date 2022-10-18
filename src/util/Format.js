@@ -26,19 +26,17 @@ export class Format {
 
     static dateToTime(date, locale = 'pt-BR'){
 
-        return date.toLocaleTimeString(this.locale,{
-            hours : '2-digit',
-            minutes :'2-digit'
+        return date.toLocaleTimeString(locale, {
+            hour: '2-digit',
+            minute:'2-digit'
         });
 
     }
 
-    static timeStampToTime(){
+    static timeStampToTime(timeStamp){
 
-        return (timeStamp && typeof timeStamp.toDate === 'function')?
-        Format.dateToTime(timeStamp.toDate()): '';
+        return (timeStamp && typeof timeStamp.toDate === 'function') ? Format.dateToTime(timeStamp.toDate()) : '';
 
     }
-
 
 }

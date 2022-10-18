@@ -3,101 +3,101 @@ import { Model } from "./model";
 
 export class User extends Model{
 
-constructor(id){
+    constructor(id){
 
-    super();
+        super();
 
-    if(id) this.getById(id);
+        if(id) this.getById(id);
 
-}
+    }
 
-get name(){ return this._data.name;}
-set name(value){ this._data.name = value; }
+    get name(){ return this._data.name;}
+    set name(value){ this._data.name = value; }
 
-get email(){ return this._data.email;}
-set email(value){ this._data.email = value; }
+    get email(){ return this._data.email;}
+    set email(value){ this._data.email = value; }
 
-get photo(){ return this._data.photo;}
-set photo(value){ this._data.photo = value; }
+    get photo(){ return this._data.photo;}
+    set photo(value){ this._data.photo = value; }
 
-get chatId(){ return this._data.chatId;}
-set chatId(value){ this._data.chatId = value; }
+    get chatId(){ return this._data.chatId;}
+    set chatId(value){ this._data.chatId = value; }
 
-getById(id){
+    getById(id){
 
-    return new Promise((s, f)=>{
+        return new Promise((s, f)=>{
 
-        User.findByEmail(id).onSnapshot(doc=>{
+            User.findByEmail(id).onSnapshot(doc=>{
 
-            this.fromJSON(doc.data());
+                this.fromJSON(doc.data());
 
-            s(doc);
+                s(doc);
+            });
+
         });
 
-    });
+    }
 
-}
+    save(){
 
-save(){
+        return User.findByEmail(this.email).set(this.toJSON());
 
-    return User.findByEmail(this.email).set(this.toJSON());
+    }
 
-}
+    static getRef(){
 
-static getRef(){
+        return Firebase.db().collection('/users')
 
-    return Firebase.db().collection('/users')
+    }
 
-}
+    static getContactsRef(id){
 
-static getContactsRef(id){
+        return User.getRef()
+        .doc(id)
+        .collection('contacts')
 
-    return User.getRef()
-    .doc(this.email)
-    .collection('contacts')
+    }
 
-}
+    static findByEmail(email){
 
-static findByEmail(email){
+        return User.getRef().doc(email);
 
-    return User.getRef().doc(email);
+    }
 
-}
+    addContact(contact){
 
-addContact(contact){
+        return User.getContactsRef(this.email)
+            .doc(btoa(contact.email))
+            .set(contact.toJSON());
 
-    User.getContactsRef(this.email)
-    .doc(btoa (contact.email))
-    .set(contact.toJSON());
+    }
 
-}
+    getContacts(filter = ''){
 
-getContacts(){
+        return new Promise((s, f)=>{
+           
+            User.getContactsRef(this.email).where('name', '>=', filter).onSnapshot(docs =>{
 
-    return new Promise((s,f) =>{
+                let contacts = [];
 
-        User.getContactsRef(this.email).onSnapshot(docs =>{
+                docs.forEach(doc=>{
 
-            let contacts =[];
+                    let data = doc.data(); 
 
-            docs.forEach(doc =>{
+                    data.id = doc.id;
 
-                let data = doc.data();
+                    contacts.push(data);
 
-                data.id = doc.id;
+                });
 
-                contacts.push(data);
+                this.trigger('contactschange', docs);
+
+                s(contacts);
 
             });
-            
-            this.trigger('contactschange',docs);
-
-            s(contacts);
 
         });
-    
-    });
 
-}
+    }
 
 }
