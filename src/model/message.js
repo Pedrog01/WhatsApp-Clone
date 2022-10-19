@@ -1,6 +1,6 @@
-import { Model } from "./model";
 import { Firebase } from "../util/Firebase";
 import { Format } from "../util/Format";
+import { Model } from "./model";
 
 
 export class Message extends Model{
@@ -23,18 +23,15 @@ export class Message extends Model{
 
     get status() {return this._data.status;}
     set status(value) {return this._data.status = value}
-
+    
     get preview() {return this._data.preview;}
     set preview(value) {return this._data.preview = value}
 
     get info() {return this._data.info;}
     set info(value) {return this._data.info = value}
-
+    
     get fileType() {return this._data.fileType;}
     set fileType(value) {return this._data.fileType = value}
-
-    get filename() {return this._data.filename;}
-    set filename(value) {return this._data.filename = value}
 
     get from() {return this._data.from;}
     set from(value) {return this._data.from = value}
@@ -42,16 +39,20 @@ export class Message extends Model{
     get size() {return this._data.size;}
     set size(value) {return this._data.size = value}
 
+    get filename() {return this._data.filename;}
+    set filename(value) {return this._data.filename = value}
+
     getViewElement(me = true){
 
         let div = document.createElement('div');
 
+        div.id = `_${this.id}`;
         div.className = 'message';
 
         switch (this.type){
 
             case 'contact':
-             div.innerHTML = `
+                div.innerHTML = `
                 <div class="_3_7SH kNKwo tail">
                     <span class="tail-container"></span>
                     <span class="tail-container highlight"></span>
@@ -73,11 +74,11 @@ export class Message extends Model{
                                 </div>
                             </div>
                             <div class="_1lC8v">
-                                <div dir="ltr" class="_3gkvk selectable-text invisible-space copyable-text">Nome do Contato Anexado</div>
+                                <div dir="ltr" class="_3gkvk selectable-text invisible-space copyable-text">${this.content.name}</div>
                             </div>
                             <div class="_3a5-b">
                                 <div class="_1DZAH" role="button">
-                                    <span class="message-time">_${Format.timeStampToTime(this.timeStamp)}</span>
+                                    <span class="message-time">${Format.timeStampToTime(this.timeStamp)}</span>
                                     
                                 </div>
                             </div>
@@ -89,6 +90,19 @@ export class Message extends Model{
                 </div>
             
                 `;
+
+                if (this.content.photo){
+                    let img = div.querySelector('.photo-contact-sended');
+                    img.src = this.content.photo
+                    img.show();
+                }
+
+                div.querySelector('.btn-message-send').on('click', e=>{
+
+                    console.log('Enviar mensagem')
+
+                });
+
             break;
 
             case 'image':
@@ -115,6 +129,8 @@ export class Message extends Model{
                                 </div>
                                 <img src="${this.content}" class="_1JVSX message-photo" style="width: 100%; display:none">
                                 <div class="_1i3Za"></div>
+                            </div>
+                           
                             <div class="_2TvOE">
                                 <div class="_1DZAH text-white" role="button">
                                     <span class="message-time">_${Format.timeStampToTime(this.timeStamp)}</span>
@@ -122,6 +138,7 @@ export class Message extends Model{
                             </div>
                         </div>
                     </div>
+
                     <div class="_3S8Q-" role="button">
                         <span data-icon="forward-chat">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" width="25" height="25">
@@ -131,14 +148,15 @@ export class Message extends Model{
                     </div>
                 </div>
                 `;
+
             div.querySelector('.message-photo').on('load', e=>{
 
-                div.querySelector('.message-photo').show();
-                div.querySelector('._340lu').hide();
+                div.querySelector('.message-photo').show()
+                div.querySelector('._34Olu').hide();
                 div.querySelector('._3v3PK').css({
                     height:'auto'
-                })
-
+                });
+               
             });
 
             break;
@@ -172,7 +190,7 @@ export class Message extends Model{
                             </div>
                         </a>
                         <div class="_3cMIj">
-                            <span class="PyPig message-file-info"${this.info}</span>
+                            <span class="PyPig message-file-info">${this.info}</span>
                             <span class="PyPig message-file-type">${this.fileType}</span>
                             <span class="PyPig message-file-size">${this.size}</span>
                         </div>
@@ -184,10 +202,12 @@ export class Message extends Model{
                     </div>
                 </div>
                 `;
-            div.on('click', e=>{
-                window.open(this.content);
-            })
 
+            div.on('click', e=>{
+
+                window.open(this.content);
+
+            });
             break;
 
             case 'audio':
@@ -258,6 +278,7 @@ export class Message extends Model{
                             </div>
                         </div>
                     </div>
+
                     <div class="_3S8Q-" role="button">
                         <span data-icon="forward-chat">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" width="25" height="25">
@@ -271,7 +292,7 @@ export class Message extends Model{
 
             default:
                 div.innerHTML = `
-                <div class="font-style _3DFk6 tail" id= "_${this.id}">
+                <div class="font-style _3DFk6 tail">
                     <span class="tail-container"></span>
                     <span class="tail-container highlight"></span>
                     <div class="Tkt2p">
@@ -308,129 +329,144 @@ export class Message extends Model{
 
     }
 
-    static upload(from, file){
+    static upload(file, from){
 
-        return new Promise((s, f)=>{
+        return new Promise((s, f )=>{
 
-            let uploadTask = Firebase
-                .hd()
-                .ref(from)
-                .child(Date.now() + '_' + file.name)
-                .put(file);
+            let uploadTask = Firebase.hd().ref(from).child(Date.now() + '_' + file.name).put(file);
 
-            uploadTask.on('state_changed', snapshot => {
+             uploadTask.on('state_changed', e=>{
 
-                console.log('upload', snapshot);
+            console.info('upload', e);
 
-            }, err => {
+        }, err =>{
+            
+            f(err);
 
-                f(err);
+        }, ()=>{
 
-            }, success => {
+           uploadTask.snapshot.ref.getDownloadURL().then(downloadURL =>{
 
-                s(uploadTask.snapshot);
+            s(downloadURL)
+
+           })
+          
+     });
+
+    });    
+
+ }
+
+    static sendContact(chatId,from, contact){
+
+        return Message.send(chatId, from, 'contact', contact);
+
+    }
+
+
+    static sendDocument(chatId, from, file, filePreview, info){
+
+        Message.send(chatId, from, 'document', '').then(msgRef =>{
+            
+            Message.upload(file, from).then(downloadURL=>{
+
+                let downloadFile = downloadURL;
+
+                    if(filePreview) {
+
+                    Message.upload(filePreview, from).then(downloadURL2 =>{
+
+                    let downloadPreview = downloadURL2;
+        
+                    msgRef.set({
+                        content: downloadFile,
+                        preview: downloadPreview,
+                        filename: file.name,
+                        size: file.size,
+                        fileType: file.type,
+                        status: 'sent',
+                        info
+                    }, {
+                        merge : true
+                    });
+
+                });
+                    
+                 } else {
+
+                    msgRef.set({
+                        content: downloadFile,
+                        filename: file.name,
+                        size: file.size,
+                        fileType: file.type,
+                        status: 'sent'
+                    }, {
+                        merge : true
+                    });      
+
+                 }
 
             });
 
         });
-
-    }
-
-    static sendDocument(chatId, from, documentFile, imageFile, pdfInfo) {
-
-        Message.send(chatId, from, 'document', '', false).then(msgRef => {
-
-            Message.send(from, documentFile).then(snapshot=>{
-
-                let fileDocumentDownload = snapshot.downloadURL;
-
-                if (imageFile) {
-
-                    Message.upload(from, imageFile).then(snapshot => {
-
-                        let fileImageDownload = snapshot.downloadURL;
-
-                        msgRef.set({
-                            content: fileDocumentDownload,
-                            preview: fileImageDownload,
-                            filename: documentFile.name,
-                            size: documentFile.size,
-                            info: pdfInfo,
-                            fileType: documentFile.type,
-                            status: 'sent'
-                        }, {
-                            merge: true
-                        });
-
-                    });
-
-                } else {
-
-                    msgRef.set({
-                        content: fileDocumentDownload,
-                        filename: documentFile.name,
-                        size: documentFile.size,
-                        fileType: documentFile.type,
-                        status: 'sent'
-                    }, {
-                        merge: true
-                    });
-
-                }
-
-            });            
-
-        });
-
+     
     }
 
     static sendImage(chatId, from, file){
 
-        return Message.send(chatId, from, 'image', '', false).then(msgRef => {
+        return new Promise((s, f)=>{
 
-            Message.upload(from, file).then(snapshot=>{
+            Message.upload(file, from).then(downloadURL=>{
 
-                msgRef.set({
-                    content: snapshot.downloadURL,
-                    status: 'sent'
-                }, {
-                    merge: true
+                    Message.send(
+                        chatId, 
+                        from, 
+                        'image', 
+                        downloadURL
+                ).then(()=>{
+
+                    s();
+
                 });
+
+            });
+
+           
+        });
+
+}
+
+
+    static send(chatId,from, type, content){
+
+       return new Promise((s, f)=>{
+
+        Message.getRef(chatId).add({
+            content,
+            timeStamp: new Date(),
+            status: 'wait',
+            type, 
+            from
+        }).then(result=>{
+
+            let docRef =  result.parent.doc(result.id);
+
+            docRef.set({
+                status:'sent'
+            }, {
+                merge:true
+            }).then(()=>{
+
+                s(docRef);
 
             });
 
         });
 
+       });
+
+
     }
-
-    static send(chatId,from, type, content){
-
-        return new Promise((s, f)=>{
- 
-         Message.getRef(chatId).add({
-             content,
-             timeStamp: new Date(),
-             status: 'wait',
-             type, 
-             from
-         }).then(result=>{
- 
-             result.parent.doc(result.id).set({
-                 status:'sent'
-             }, {
-                 merge:true
-             }).then(()=>{
- 
-                 s();
- 
-             });
- 
-         });
- 
-        });
- 
- 
-     }
 
     static getRef(chatId){
 

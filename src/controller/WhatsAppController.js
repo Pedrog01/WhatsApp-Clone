@@ -7,7 +7,7 @@ import { User } from '../model/User';
 import { Chat } from '../model/Chat';
 import { Message } from '../model/message';
 import { Base64 } from '../util/Base64';
-
+import { ContactsController } from './ContactsController';
 
 export class WhatsAppController{
 
@@ -652,7 +652,7 @@ export class WhatsAppController{
           let file = this.el.inputDocument.files[0];
           let base64 = this.el.imgPanelDocumentPreview.src;
 
-          if(file.type === 'apllication/pdf'){
+          if(file.type === 'aplication/pdf'){
 
             Base64.toFile(base64).then(filePreview =>{
 
@@ -672,14 +672,22 @@ export class WhatsAppController{
         });
 
         this.el.btnAttachContact.on('click', e =>{
-            
-            this.el.modalContacts.show();
+          
+            this._ContactsContoller = new ContactsController(this._ContactsContoller,this._user);
+
+            this._ContactsContoller.on('select', contact =>{
+
+                Message.sendContact(this._contactActive.chatId, this._user.email,contact)
+
+            });
+
+            this._ContactsContoller.open();
 
         });
 
         this.el.btnCloseModalContacts.on('click', e =>{
 
-            this.el.modalContacts.hide();
+         this._ContactsContoller.close();
 
         });
 
